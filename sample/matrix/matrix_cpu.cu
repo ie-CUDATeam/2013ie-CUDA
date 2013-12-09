@@ -3,7 +3,7 @@
 #include <malloc.h>
 #include <time.h>
 
-/*n正方行列のサイズを定義*/
+/* Defines the size of n square matrix */
 #define MATRIX_SIZE 1024
 
 int main(int argc, char** argv){
@@ -12,10 +12,10 @@ int main(int argc, char** argv){
   int* matB;
   int* matC;
 
-/*タイマー作成*/
+/* Creating a timer */
   time_t Start, Stop;
 
-/*int型のn×n領域をメモリに確保*/
+/* The reserved memory the n × n area of type int */
   matA = (int*)malloc(sizeof(int) * MATRIX_SIZE * MATRIX_SIZE);
   matB = (int*)malloc(sizeof(int) * MATRIX_SIZE * MATRIX_SIZE);
   matC = (int*)malloc(sizeof(int) * MATRIX_SIZE * MATRIX_SIZE);
@@ -42,7 +42,7 @@ int main(int argc, char** argv){
   time(&Stop);
   printf("Processing time: %d (sec)\n", Stop - Start);
 
-/*メモリを解放*/
+/* Open the memory */
   free(matA);
   free(matB);
   free(matC);

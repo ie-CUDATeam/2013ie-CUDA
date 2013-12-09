@@ -19,7 +19,7 @@ unsigned int matrixSize = sizeof(unsigned int) * MATRIX_SIZE * MATRIX_SIZE;
   hMatrixA = (int*)malloc(matrixSize);
   hMatrixB = (int*)malloc(matrixSize);
 
-/*初期値設定*/
+/* Initial value setting */
   unsigned int col_idx, row_idx;
   for (col_idx = 0; col_idx < MATRIX_SIZE; col_idx++){
       for (row_idx = 0; row_idx < MATRIX_SIZE; row_idx++){
@@ -28,41 +28,41 @@ unsigned int matrixSize = sizeof(unsigned int) * MATRIX_SIZE * MATRIX_SIZE;
       }
   }
 
-/*デバイス側の変数設定*/
+/* Variable settings on the device side */
   int* dMatrixA;
   int* dMatrixB;
   int* dMatrixC;
  
-/*デバイスメモリ領域の確保*/
+/* Ensure the device memory area */
   cutilSafeCall(cudaMalloc((void**)&dMatrixA, matrixSize));
   cutilSafeCall(cudaMemcpy(dMatrixA, hMatrixA, matrixSize, cudaMemcpyHostToDevice));
   cutilSafeCall(cudaMalloc((void**)&dMatrixB, matrixSize));
   cutilSafeCall(cudaMemcpy(dMatrixB, hMatrixB, matrixSize, cudaMemcpyHostToDevice));
   cutilSafeCall(cudaMalloc((void**)&dMatrixC, matrixSize));
 
-/*ブロックサイズとグリッドサイズの設定*/
+/*Setting the grid size and block size */
   dim3 block(BLOCK_SIZE, BLOCK_SIZE);
   dim3 grid(MATRIX_SIZE/BLOCK_SIZE, MATRIX_SIZE/BLOCK_SIZE);
 
-/*タイマーを作成して計測開始*/
+/* Measurement create and start a timer */
   unsigned int timer = 0;
   CUT_SAFE_CALL( cutCreateTimer( &timer));
   CUT_SAFE_CALL( cutStartTimer( timer));
 
-/*カーネルの起動*/
+/* Starting the kernel */
   matrixMul<<<grid, block>>>(dMatrixA, dMatrixB, dMatrixC);
   cudaThreadSynchronize();
 
-/*結果の領域確保とデバイス側からのメモリ転送*/
+/* Memory transfer from the device side and secure area of the results */
   hMatrixC = (int*)malloc(matrixSize);
   cutilSafeCall(cudaMemcpy(hMatrixC, dMatrixC, matrixSize, cudaMemcpyDeviceToHost));
 
-/*タイマーを停止しかかった時間を表示*/
+/* Show time we came to stop the timer */
   CUT_SAFE_CALL( cutStopTimer( timer));
   printf("Processing time: %f (msec)\n", cutGetTimerValue( timer));
   CUT_SAFE_CALL( cutDeleteTimer( timer));
 
-/*ホスト・デバイスメモリの開放*/
+/* The opening of the host device memory */
   free(hMatrixA);
   free(hMatrixB);
   free(hMatrixC);
@@ -70,7 +70,7 @@ unsigned int matrixSize = sizeof(unsigned int) * MATRIX_SIZE * MATRIX_SIZE;
   cutilSafeCall(cudaFree(dMatrixB));
   cutilSafeCall(cudaFree(dMatrixC));
  
-/*終了処理*/
+/* Processing end　*/
   cudaThreadExit();
   cutilExit(argc, argv);
  }
@@ -82,7 +82,7 @@ matrixMul(int* inMatrixA, int* inMatrixB, int* inMatrixC){
   unsigned int scan_idx;
   unsigned int target = 0;
 
-/*行列の演算を行う*/
+/* Line the calculation of the matrix */
  for (scan_idx = 0; scan_idx < MATRIX_SIZE; scan_idx++) {
    target +=inMatrixA[col_idx * MATRIX_SIZE + scan_idx] * inMatrixB[scan_idx * MATRIX_SIZE + row_idx];
    __syncthreads();
