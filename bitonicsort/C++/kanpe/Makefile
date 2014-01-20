@@ -6,13 +6,20 @@ CFLAGS = -W -O2
 CC = g++
 
 all:
-	$(CC) $(CFLAGS) -o a.out bitonic.cc
+	$(CC) $(CFLAGS) -o a.out my_bitonic.cc
+#	$(CC) $(CFLAGS) -o a.out bitonic.cc
 
 test:
-	./a.out < input
+	./a.out < input0
+
+test1:
+	./a.out < input1
 
 test2:
 	./a.out < input2
+
+test3:
+	./a.out < input3
 
 clean:
 	rm ./a.out
