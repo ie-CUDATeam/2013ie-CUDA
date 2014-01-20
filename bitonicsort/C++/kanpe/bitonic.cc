@@ -9,7 +9,7 @@ void step(const int block);
 //void descending_order(int n);
 
 const int SHOW_DIGIT  = 2;
-int DUMMY_VALUE       = 99;
+const int DUMMY_VALUE       = 99;
 std::vector<int> vec;
 int N;
 int main(void) {
@@ -25,20 +25,25 @@ int main(void) {
 }
 
 void step(const int block) {
+    printf("-------------------------[%d]\n", block);
     for (int step = block/2; 1 <= step; step/=2) {
-        //std::cout << "step:" << step << std::endl;
         bool blue_flag = true;
+        printf("----------[%d]\n", step);
         for (int idx = 0; idx < N; idx++) {
             int e = idx^step;
             if (idx < e) {
                 int v1 = vec[idx];
                 int v2 = vec[e];
                 if ((idx&block) != 0) {
+                    printf("[%02d] and [%02d] comparison ", idx, e);
+                    printf("BLUE!!\n");
                     if (v1 < v2) {
                         vec[e] = v1; 
                         vec[idx] = v2; 
                     }
                 } else {
+                    printf("[%02d] and [%02d] comparison ", idx, e);
+                    printf(" RED!!\n");
                      if (v2 < v1) {
                         vec[e] = v1; 
                         vec[idx] = v2; 
