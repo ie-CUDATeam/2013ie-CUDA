@@ -6,7 +6,7 @@ CFLAGS = -W -O2
 CC = g++
 
 all:
-	$(CC) $(CFLAGS) -o a.out merge.c
+	$(CC) $(CFLAGS) -o merge merge.cc
 
 test:
 	./a.out < input0
