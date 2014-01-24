@@ -1,7 +1,7 @@
 #include<iostream>
 using namespace std;
-#define THREADS 16 // 2^9
-#define BLOCKS 8 // 2^15
+#define THREADS 1024
+#define BLOCKS 1024
 #define NUM_VALS THREADS*BLOCKS
 
 void merge(int *arr, int size1, int size2) {
@@ -24,9 +24,7 @@ void mergeSort(int *arr, int size) {
   if (size == 1) return;
   int size1 = size/2, size2 = size-size1;
   mergeSort(arr, size1);
-  printf("size1 - %d ,",size1);
   mergeSort(arr+size1, size2);
-  printf("size2 - %d \n",size2);
 
   merge(arr, size1, size2);
 }
@@ -60,6 +58,6 @@ int main(void) {
   mergeSort(values, NUM_VALS);
 
   // Print the sorted array
-  arrayPrint(values, NUM_VALS);
+  // arrayPrint(values, NUM_VALS);
   return 0;
 }
