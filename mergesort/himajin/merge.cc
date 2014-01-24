@@ -1,11 +1,11 @@
 #include<iostream>
 using namespace std;
-#define THREADS 1024
+#define THREADS 1024 * 128
 #define BLOCKS 1024
 #define NUM_VALS THREADS*BLOCKS
 
 void merge(int *arr, int size1, int size2) {
-  int temp[size1+size2];
+  int *temp = (int*) malloc( (size1+size2) * sizeof(int));
   int ptr1=0, ptr2=0;
 
   while (ptr1+ptr2 < size1+size2) {
@@ -18,6 +18,7 @@ void merge(int *arr, int size1, int size2) {
 
   for (int i=0; i < size1+size2; i++)
     arr[i] = temp[i];
+  free(temp);
 }
 
 void mergeSort(int *arr, int size) {

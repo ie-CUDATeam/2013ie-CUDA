@@ -7,6 +7,7 @@ CC = g++
 
 all:
 	$(CC) $(CFLAGS) -o merge merge.cc
+	nvcc -o cuda_merge -arch=sm_20 merge.cu
 
 test:
 	./a.out < input0
