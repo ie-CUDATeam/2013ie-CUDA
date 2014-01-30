@@ -1,4 +1,5 @@
 #include <iostream>
+#include <time.h>
 
 void input(void);
 void show(void);
@@ -15,20 +16,26 @@ int max;
 int array[MAX_N];
 
 int main(void) {
+    clock_t start, stop;
     input();
+    start = clock();
     sort();
-    show();
+    stop  = clock();
+    double elapsed = ((double) (stop - start)) / CLOCKS_PER_SEC;
+    printf("Elapsed time: %.3fs\n", elapsed);
+    //show();
     return 0;
 }
 
 void sort(void) {
+    show();
     for (int i = 2; i <= max; i *= 2) {
         sort_step(i); 
     }
 }
 
 void sort_step(int step) {
-    printf("----------------[%d]\n", step);
+    //printf("----------------[%d]\n", step);
     bool flags[max];
     bool red_flag = true;
     for (int i = 0; i < max; i += step) {
@@ -44,6 +51,7 @@ void sort_step(int step) {
             int end   = start + step - 1;
             sort_zone(start, end, step, flags[j]);
         }
+        show();
     }
 }
 
