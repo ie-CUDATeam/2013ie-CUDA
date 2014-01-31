@@ -20,30 +20,30 @@ void print_elapsed(clock_t start, clock_t stop)
   printf("Elapsed time: %.3fs\n", elapsed);
 }
  
-float random_float()
+int random_int()
 {
-  return (float)rand()/(float)RAND_MAX;
+  return (int)(((float)rand()/(float)RAND_MAX) * 1000000);
 }
  
-void array_print(float *arr, int length) 
+void array_print(int *arr, int length) 
 {
   int i;
   for (i = 0; i < length; ++i) {
-    printf("%1.3f ",  arr[i]);
+    printf("%d ",  arr[i]);
   }
   printf("\n");
 }
  
-void array_fill(float *arr, int length)
+void array_fill(int *arr, int length)
 {
   srand(time(NULL));
   int i;
   for (i = 0; i < length; ++i) {
-    arr[i] = random_float();
+    arr[i] = random_int();
   }
 }
  
-__global__ void bitonic_sort_step(float *dev_values, int idx, int block)
+__global__ void bitonic_sort_step(int *dev_values, int idx, int block)
 {
   unsigned int i, e; /* Sorting partners: i and ixj */
   i = threadIdx.x + blockDim.x * blockIdx.x;
@@ -55,7 +55,7 @@ __global__ void bitonic_sort_step(float *dev_values, int idx, int block)
       /* Sort ascending */
       if (dev_values[i]>dev_values[e]) {
         /* exchange(i,ixj); */
-        float temp = dev_values[i];
+        int temp = dev_values[i];
         dev_values[i] = dev_values[e];
         dev_values[e] = temp;
       }
@@ -64,7 +64,7 @@ __global__ void bitonic_sort_step(float *dev_values, int idx, int block)
       /* Sort descending */
       if (dev_values[i]<dev_values[e]) {
         /* exchange(i,ixj); */
-        float temp = dev_values[i];
+        int temp = dev_values[i];
         dev_values[i] = dev_values[e];
         dev_values[e] = temp;
       }
@@ -75,10 +75,10 @@ __global__ void bitonic_sort_step(float *dev_values, int idx, int block)
 /**
  * Inplace bitonic sort using CUDA.
  */
-void bitonic_sort(float *values)
+void bitonic_sort(int *values)
 {
-  float *dev_values;
-  size_t size = NUM_VALS * sizeof(float);
+  int *dev_values;
+  size_t size = NUM_VALS * sizeof(int);
  
   cudaMalloc((void**) &dev_values, size);
   cudaMemcpy(dev_values, values, size, cudaMemcpyHostToDevice);
@@ -102,7 +102,7 @@ int main(void)
 {
   clock_t start, stop;
  
-  float *values = (float*) malloc( NUM_VALS * sizeof(float));
+  int *values = (int*) malloc( NUM_VALS * sizeof(int));
   array_fill(values, NUM_VALS);
  
   start = clock();
