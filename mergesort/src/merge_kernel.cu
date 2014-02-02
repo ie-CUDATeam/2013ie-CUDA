@@ -55,7 +55,9 @@ __device__ inline void Merge (int* dvalues, KernelArray<int> results, int l, int
 }
 
 
-__global__ static void MergeSort (KernelArray<int> dvalues, KernelArray<int> results, int num)
+__global__ static void
+__launch_bounds__(1024)
+MergeSort (KernelArray<int> dvalues, KernelArray<int> results, int num)
 {
 	//extern __shared__ thrust::device_vector<int> shared;
 	extern __shared__ int shared[];
@@ -92,4 +94,3 @@ __global__ static void MergeSort (KernelArray<int> dvalues, KernelArray<int> res
 }
 
 #endif
-
