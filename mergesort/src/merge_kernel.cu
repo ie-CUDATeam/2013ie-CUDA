@@ -33,11 +33,11 @@ KernelArray<T> convertoKernel( thrust::device_vector<T> &dVec)
 	return kArray;
 }
 
-__device__ inline void Merge (int* dvalues, KernelArray<int> results, int l, int r, int u)
+__device__ inline void Merge (int* dvalues, KernelArray<int> results, int l, int r, int rend)
 	{
 	int i, j, k;
 		i=l ; j=r ; k=l ;
-		while ( i <r && j <u ) {
+		while ( i <r && j <rend ) {
 			if ( dvalues[i]<= dvalues[j] ) { results._array[k]= dvalues[i] ; i ++;}
 			else{ results._array[k]= dvalues[j]; j ++;}
 			k++;
@@ -46,10 +46,10 @@ __device__ inline void Merge (int* dvalues, KernelArray<int> results, int l, int
 			results._array[k]= dvalues[i] ; i ++; k++;
 		}
 
-		while ( j<u ) {
+		while ( j<rend ) {
 			results._array[k]= dvalues[j] ; j ++; k++;
 		}
-		for ( k=l; k<u; k++) {
+		for ( k=l; k<rend; k++) {
 			dvalues[k]= results._array[k];
 		}
 }
@@ -63,7 +63,7 @@ MergeSort (KernelArray<int> dvalues, KernelArray<int> results, int num)
 	extern __shared__ int shared[];
 
 	const unsigned int tid = threadIdx.x;
-	int i, k, u; //k=window size, i = left, u = right
+	int i, k, rend; //k=window size, i = left, u = right
 
 	// Copy input to shared mem
 	shared[tid] = dvalues._array[tid];
@@ -72,19 +72,22 @@ MergeSort (KernelArray<int> dvalues, KernelArray<int> results, int num)
 	__syncthreads();
 
 	k = 1;
+	//k = 16;
 
 	while ( k <num)
 	{
-		i = 0;
+		//i = 0;
+		i = tid * (k*2);
 		while ( i+k <= num)
 		{
-			u = i+k*2;
-			if ( u> num)
+			rend = i+k*2;
+			if ( rend> num)
 			{
-				u = num+1;
+				rend = num;
 			}
 
-			Merge( shared, results, i, i+k, u);
+			if(tid<(num/(k*2)))
+					Merge( shared, results, i, i+k, rend);
 			i = i+k*2 ;
 		}
 		k = k*2;
